@@ -1,0 +1,11 @@
+Household_id,individual_ID,startType,cor_long,cor_lat,adress,firstname,lastname,dob,gender,age_at_death,whom,causofdeathnotdiagnosed,place_of_death,date_of_death,meta_instance_id,cause_of_death,Place_of _death,diagnoseddeath,causeofdeathdiagnosed,weath_sc3,read_write,occup,educ_statu
+HH-101,IND-2023-001,Baseline,38.756421,9.003214,North Gondar,Abebe,Tesfaye,12-05-1970,Male,52,Father,"""Old age""",Home,15-03-2023,-,No,-,No,-,Middle,Yes,Farmer,Primary
+HH-102,IND-2023-002,Follow-up,39.112345,8.456732,South Wollo,Tigist,Hailu,25-08-1995,Female,27,Sister,-,Health Center,22-04-2023,"""Malaria""",Yes,Wollo Health Center,Yes,P. falciparum malaria,Low,No,-,Secondary
+HH-103,IND-2023-003,Baseline,37.889012,11.56789,Addis Ababa,Samuel,Girma,03-11-1980,Male,120,Uncle,"""Unknown""",Hospital,10-05-2023,"""Cardiac arrest""",Yes,Tikur Anbessa Hospital,No,-,High,Yes,Merchant,Tertiary
+HH-104,IND-2023-004,Follow-up,-,-,Oromo Zone,Meselech,Worku,14-02-2004,Female,19,Daughter,"""Sudden illness""",-,30-05-2023,-,No,-,No,-,Low,Yes,Student,Secondary
+HH-105,IND-2023-005,Baseline,38.334567,10.123456,Bahir Dar,Yohannes,Lemma,20-07-1955,Male,67,Grandfather,"""Shortness of breath""",Home,05-06-2023,"""COPD""",Yes,Bahir Dar Clinic,Yes,Chronic respiratory disease,Middle,No,-,Illiterate
+HH-106,IND-2023-006,Follow-up,39.001234,12.345678,Tigray Region,Frehiwot,Mekonnen,01-01-2010,Female,13,Daughter,"""Fever""",Health Post,18-06-2023,"""Sepsis""",Yes,Mekelle Health Post,Yes,Bacterial infection,Low,-,-,Primary
+HH-107,IND-2023-007,Baseline,38.789012,9.876543,Amhara,Birtukan,Demisse,30-09-1978,Female,44,Mother,-,En route to hospital,25-07-2023,"""Road traffic accident""",Yes,-,No,-,Middle,Yes,Housewife,Primary
+HH-108,IND-2023-008,Follow-up,37.654321,8.987654,SNNPR,Tewodros,Getachew,15-03-1992,Male,31,Brother,"""Chest pain""",Home,12-08-2023,"""TB""",No,-,No,-,Low,No,Laborer,Illiterate
+HH-109,IND-2023-009,Baseline,-,10.555555,Afar Region,Aman,Hussein,22-10-2001,Male,21,Son,"""Diarrhea""",Health Center,09-09-2023,"""Cholera""",Yes,Afar Health Center,Yes,Acute watery diarrhea,-,Yes,Pastoralist,None
+HH-110,IND-2023-010,Follow-up,38.123456,11.111111,Dire Dawa,Halima,Ahmed,05-12-1988,Female,34,Wife,"""Postpartum bleeding""",Hospital,20-10-2023,"""Hemorrhage""",Yes,Dire Dawa Hospital,Yes,Maternal complication,High,Yes,-,Secondary
