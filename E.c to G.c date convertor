@@ -1,0 +1,91 @@
+# Load necessary libraries
+library(dplyr)
+library(readxl)
+library(writexl)  # For saving as Excel
+
+# Function to convert Ethiopian date to Gregorian
+ethiopian_to_gregorian <- function(eth_date) {
+  if (is.na(eth_date) || eth_date == "") {
+    return(NA)  # Skip missing values
+  }
+  
+  parts <- unlist(strsplit(as.character(eth_date), "-"))  # Ensure string format
+  
+  if (length(parts) != 3) {
+    return(NA)  # Skip invalid formats
+  }
+  
+  eth_year <- as.numeric(parts[1])
+  eth_month <- as.numeric(parts[2])
+  eth_day <- as.numeric(parts[3])
+  
+  if (any(is.na(c(eth_year, eth_month, eth_day)))) {
+    return(NA)  # Skip non-numeric values
+  }
+  
+  # Base year difference between Ethiopian and Gregorian calendar is ~7-8 years
+  base_year <- eth_year + 7
+  
+  # Determine the Gregorian year for the Ethiopian date
+  gregorian_year <- base_year
+  # Check if it's a leap year adjustment
+  if (eth_month == 1 && eth_day <= 10) {
+    gregorian_year <- base_year - 1  # Adjust if Ethiopian date is before September in the Ethiopian year
+  }
+  
+  # Define Ethiopian month lengths
+  eth_month_days <- c(rep(30, 11), 5)  # 12 months with 30 days, the 13th month has 5 days
+  
+  # Validate the date
+  if (eth_month < 1 || eth_month > 13 || eth_day < 1 || eth_day > eth_month_days[eth_month]) {
+    return(NA)  # Skip invalid dates
+  }
+  
+  # Convert the Ethiopian date to the number of days since Meskerem 1
+  days_since_new_year <- sum(eth_month_days[1:(eth_month - 1)]) + eth_day - 1
+  
+  # Set the Ethiopian New Year start date in the Gregorian calendar
+  new_year_date <- as.Date(paste0(gregorian_year, "-09-11"))
+  
+  # Adjust for leap years (Ethiopian New Year shifts to Sept 12 in some years)
+  if (as.integer(format(new_year_date, "%Y")) %% 4 == 3) {
+    new_year_date <- new_year_date + 1
+  }
+  
+  # Calculate the Gregorian date
+  gregorian_date <- new_year_date + days_since_new_year
+  return(as.character(gregorian_date))
+}
+
+# Read the Excel file
+file_path <- "C:\\Users\\mihre\\OneDrive\\Desktop\\Datefiltered.xlsx"
+df <- read_excel(file_path)
+
+# List of columns to convert
+date_columns <- c(
+  "date_complete", "date_of_first_visit", "date_of_informed_consent_s",
+  "date_or_month_of_last_infe", "date_or_month_of_treatment", "date_symptoms_first_appear",
+  "date_of_test", "date_of_test1", "date_of_test2", "start_date", "start_date_2",
+  "start_date_3", "start_date_4", "date_administered_2", "date_administered",
+  "date_start1", "date_start2", "date_start3", "date_start4", "date_start5",
+  "date_start6", "end_start1", "end_start2", "end_start3", "end_start4",
+  "end_start5", "end_start6", "date_completed", "date_of_visit2",
+  "if_yes_date_of_last_contac", "date_completed_d7", "date_of_visit2_d7",
+  "date_of_completion_d7", "if_yes_date_of_last_contac_d7", "date_completed_d7_13",
+  "date_of_visit2_d7_13", "date_of_completion_d7_13"
+)
+
+# Convert all date columns to character type first
+df <- df %>%
+  mutate(across(all_of(date_columns), as.character))
+
+# Convert Ethiopian dates to Gregorian dates
+df <- df %>%
+  mutate(across(all_of(date_columns), ~ sapply(.x, ethiopian_to_gregorian), .names = "greg_{.col}"))
+
+# Save the updated data to a new Excel file
+output_file <- "C:\\Users\\mihre\\OneDrive\\Documents\\dategc.xlsx"
+write_xlsx(df, output_file)
+
+print(paste("Conversion complete! Saved as", output_file))
+
