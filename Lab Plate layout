@@ -1,0 +1,62 @@
+# Required packages
+library(readxl)
+library(tidyverse)
+library(writexl)
+
+# STEP 1: Load your Excel file
+excel_path <- "C:/Users/mihre/OneDrive/Desktop/8SubStudyA_DATA_2025-07-31_0714.xlsx"
+data <- read_excel(excel_path)
+
+# STEP 2: Define well layout row-wise
+plate_layout <- expand.grid(Column = 1:12, Row = LETTERS[1:8]) %>%
+  arrange(Row, Column) %>%
+  mutate(Well = paste0(Row, Column))
+
+wells_per_plate <- nrow(plate_layout)  # 96
+
+# STEP 3: Assign wells and plates
+data_with_layout <- data %>%
+  mutate(
+    Plate = ceiling(row_number() / wells_per_plate),
+    Well_Index = (row_number() - 1) %% wells_per_plate + 1
+  ) %>%
+  left_join(plate_layout %>% mutate(Well_Index = row_number()), by = "Well_Index") %>%
+  select(Plate, Well, Row, Column, everything()) %>%
+  arrange(Plate, Row, Column)
+
+# STEP 4: Function to convert to wide with row ID and plate column
+to_wide_format <- function(df) {
+  df %>%
+    select(Row, Column, record_id) %>%
+    pivot_wider(names_from = Column, values_from = record_id) %>%
+    arrange(Row) %>%
+    mutate(Row_ID = 1:8) %>%
+    mutate(Plate = unique(df$Plate)) %>%
+    relocate(Plate, Row_ID, Row)
+}
+
+# STEP 5: Combine all plates into one sheet
+combined_plates_wide <- data_with_layout %>%
+  group_by(Plate) %>%
+  group_split() %>%
+  map_df(~ {
+    plate_num <- unique(.x$Plate)
+    plate_wide <- to_wide_format(.x)
+    # Add a label row for each plate
+    label_row <- tibble(
+      Plate = NA, Row_ID = NA, Row = paste0("Plate ", plate_num),
+      !!!setNames(rep(NA, 12), as.character(1:12))
+    )
+    spacer_row <- tibble(
+      Plate = NA, Row_ID = NA, Row = NA,
+      !!!setNames(rep(NA, 12), as.character(1:12))
+    )
+    bind_rows(label_row, plate_wide, spacer_row)
+  })
+
+# STEP 6: Export all plates in one sheet
+write_xlsx(
+  list("All_Plates" = combined_plates_wide),
+  "C:/Users/mihre/OneDrive/Desktop/All_96_Well_Plates_Rowwise_WithPlateAndRowID.xlsx"
+)
+
