@@ -1,0 +1,45 @@
+# Install necessary packages
+install.packages("redcapAPI")
+install.packages("tidyverse")
+
+library(redcapAPI)
+library(tidyverse)
+
+# STEP 1: Connect to REDCap API
+redcap_url <- "https://redcapsvr2.ahri.gov.et/redcap_v13.10.1/API"       # Replace with your REDCap API URL
+api_token  <- "3FB8036FC6D0B4F03962DCDB1A898282"              # Replace with your REDCap API Token
+
+rcon <- redcapConnection(url = redcap_url, token = api_token)
+
+# STEP 2: Export metadata (to access branching logic info)
+meta <- exportMetaData(rcon)
+
+# STEP 3: Export data with branching logic auto-handled
+# form_complete_auto=TRUE includes form completion flags
+# exportDataAccessGroups=TRUE if you use DAGs (optional)
+data <- exportRecords(
+  rcon,
+  factors = TRUE,
+  form_complete_auto = TRUE,
+  dag = TRUE,
+  fields = NULL,
+  colClasses = NULL,
+  missing = FALSE,          # ensures missing fields not shown due to logic are excluded
+  rawOrLabel = "label"
+)
+
+# STEP 4: Compute missing values (excluding fields hidden by branching logic)
+missing_summary <- colSums(is.na(data))
+
+# STEP 5: Convert summary to data frame and save
+missing_df <- data.frame(
+  field = names(missing_summary),
+  missing_count = as.numeric(missing_summary)
+)
+
+# STEP 6: Export missing summary to CSV
+write_csv(missing_df, "C:/Users/mihre/OneDrive/Desktop/qc_missing_summary_filtered.csv")
+
+# Optional: Print
+print(missing_df)
+
