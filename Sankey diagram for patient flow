@@ -1,0 +1,90 @@
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(networkD3)
+
+# Load Excel
+df <- read_excel("C:/Users/mihre/OneDrive/Desktop/Treatment outcome.xlsx", sheet = "Sheet1")
+
+# Tidy the data
+df_long <- df %>%
+  select(subject_id,
+         `Cause` = `cause_species`,
+         `Below D28` = `below D-28`,
+         `Between D28–D42` = `between D_28 and D_42`,
+         `At D42` = `at D_42`,
+         `Between D42–D90` = `between D_42 and D_90`,
+         `between D_90-D_180` = `between D_90-D_180`,
+         `6th month` = `6th month completed`) %>%
+  pivot_longer(cols = -subject_id,
+               names_to = "Stage",
+               values_to = "Species") %>%
+  filter(!is.na(Species)) %>%
+  mutate(Stage_Species = paste(Stage, Species, sep = ": ")) %>%
+  arrange(subject_id, match(Stage, c("Cause", "Below D28", "Between D28–D42", 
+                                     "At D42","Between D42–D90", "between D_90-D_180", "6th month")))
+
+# Create transitions per subject
+df_transitions <- df_long %>%
+  group_by(subject_id) %>%
+  mutate(Next_Stage = lead(Stage_Species)) %>%
+  filter(!is.na(Next_Stage)) %>%
+  ungroup()
+
+# Count transitions
+links <- df_transitions %>%
+  count(Stage_Species, Next_Stage, name = "value") %>%
+  rename(source = Stage_Species, target = Next_Stage)
+
+# Count for labeling
+node_counts <- df_long %>%
+  count(Stage_Species, name = "count") %>%
+  mutate(labeled_node = paste0(Stage_Species, "\n(n = ", count, ")"))  # Count on new line
+
+# Add labels to links
+links <- links %>%
+  left_join(node_counts %>% select(source = Stage_Species, source_label = labeled_node), by = "source") %>%
+  left_join(node_counts %>% select(target = Stage_Species, target_label = labeled_node), by = "target") %>%
+  select(source_label, target_label, value) %>%
+  rename(source = source_label, target = target_label)
+
+# Node list
+nodes <- data.frame(name = unique(c(links$source, links$target)))
+
+# Extract species for coloring
+nodes$species <- tolower(gsub(".*: (.*?) .*", "\\1", nodes$name))
+nodes$species <- ifelse(grepl("mixed", nodes$name, ignore.case = TRUE), "mixed",
+                        ifelse(grepl("pv", nodes$name, ignore.case = TRUE), "pv",
+                               ifelse(grepl("pf", nodes$name, ignore.case = TRUE), "pf", "other")))
+
+# Define colors
+nodes$group <- nodes$species
+
+# Map node name to index
+links$source <- match(links$source, nodes$name) - 1
+links$target <- match(links$target, nodes$name) - 1
+
+# Define color scale
+color_scale <- 'd3.scaleOrdinal()
+  .domain(["pf", "pv", "mixed", "other"])
+  .range(["green", "blue", "yellow", "gray"])'
+
+# Sankey diagram
+sankeyNetwork(Links = links, Nodes = nodes,
+              Source = "source", Target = "target",
+              Value = "value", NodeID = "name",
+              NodeGroup = "group", 
+              fontSize = 12, nodeWidth = 30,
+              colourScale = color_scale)
+library(htmlwidgets)
+
+# Save the Sankey plot to an HTML file
+saveNetwork(
+  sankeyNetwork(Links = links, Nodes = nodes,
+                Source = "source", Target = "target",
+                Value = "value", NodeID = "name",
+                fontSize = 12, nodeWidth = 30,
+                colourScale = color_scale, NodeGroup = "group"),
+  file = "C:/Users/mihre/OneDrive/Desktopsankey_output.html"
+)
+
