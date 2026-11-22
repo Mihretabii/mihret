@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mihret Ebabu Portfolio</title>
+<meta name="description" content="Mihret Ebabu: research data manager and software developer in Addis Ababa. REDCap, KoboToolbox/ODK, R, Python, Power BI and health software for global health research.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: the page reads like a research data dictionary: every section is keyed by a
+   monospace variable name, the way a field instrument becomes a clean dataset. */
+:root{
+  --paper:#F3F6F5; --card:#FFFFFF; --ink:#0F2A2E; --muted:#51666A; --line:#D3DDDB;
+  --accent:#0B7A69; --accent-ink:#FFFFFF; --mark:#F5D04C; --mark-ink:#2B2300;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0C1A1C; --card:#13262A; --ink:#E5EEEC; --muted:#9DB2B0; --line:#26403F;
+    --accent:#3CC2A9; --accent-ink:#06201B; --mark:#E8C547; --mark-ink:#231C00; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0C1A1C; --card:#13262A; --ink:#E5EEEC; --muted:#9DB2B0; --line:#26403F;
+  --accent:#3CC2A9; --accent-ink:#06201B; --mark:#E8C547; --mark-ink:#231C00; color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper); color:var(--ink); font:16px/1.6 var(--body); -webkit-font-smoothing:antialiased}
+a{color:var(--accent); text-underline-offset:3px}
+a:focus-visible, button:focus-visible, select:focus-visible{outline:3px solid var(--mark); outline-offset:2px}
+.wrap{max-width:1080px; margin:0 auto; padding:0 24px}
+h1,h2,h3{font-family:var(--display); text-wrap:balance; margin:0; line-height:1.08}
+.var{font:500 .78rem/1 var(--mono); letter-spacing:.02em; color:var(--accent); text-transform:none}
+.var::before{content:"["} .var::after{content:"]"}
+
+/* top bar */
+.top{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:22px 0; border-bottom:1px solid var(--line); flex-wrap:wrap}
+.top b{font-family:var(--display); font-weight:700; font-size:1.05rem}
+.top nav{display:flex; gap:18px; flex-wrap:wrap; font-size:.92rem}
+.top nav a{color:var(--muted); text-decoration:none} .top nav a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid; grid-template-columns:1.15fr .85fr; gap:48px; padding:56px 0 40px; align-items:start}
+.hero h1{font-size:clamp(2.3rem,5.2vw,4rem); font-weight:800; letter-spacing:-.025em}
+.hero h1 em{font-style:normal; background:linear-gradient(transparent 58%, var(--mark) 58%); color:inherit; padding:0 .08em}
+.hero p.lead{font-size:1.15rem; color:var(--muted); max-width:34em; margin:22px 0 28px}
+.who{font:500 .95rem/1.4 var(--body); color:var(--ink); margin:0 0 18px}
+.dot{width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-right:8px; vertical-align:1px}
+.cta{display:flex; gap:12px; flex-wrap:wrap}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:12px 18px; border-radius:8px; font-weight:600; text-decoration:none; border:1.5px solid var(--ink); color:var(--ink)}
+.btn.primary{background:var(--ink); color:var(--paper)}
+.btn:hover{transform:translateY(-1px)}
+
+/* data dictionary card */
+.dict{background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(15,42,46,.45)}
+.dict header{display:flex; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--line); font:500 .75rem/1.2 var(--mono); color:var(--muted)}
+.dict .scroll{overflow-x:auto}
+.dict table{border-collapse:collapse; width:100%; font:400 .78rem/1.35 var(--mono); min-width:420px}
+.dict th{font-weight:500; text-align:left; color:var(--muted); padding:8px 12px; border-bottom:1px solid var(--line); white-space:nowrap}
+.dict td{padding:8px 12px; border-bottom:1px dashed var(--line); vertical-align:top}
+.dict tr:last-child td{border-bottom:0}
+.dict td:first-child{color:var(--ink); font-weight:500}
+.dict .logic{color:var(--accent)}
+.dict footer{padding:10px 14px; font-size:.78rem; color:var(--muted); border-top:1px solid var(--line)}
+
+/* numbers */
+.nums{display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin:8px 0 0}
+.nums div{padding:22px 18px; border-right:1px solid var(--line)}
+.nums div:last-child{border-right:0}
+.nums strong{display:block; font:800 2rem/1 var(--display); font-variant-numeric:tabular-nums; letter-spacing:-.02em}
+.nums span{font-size:.88rem; color:var(--muted)}
+
+/* sections */
+section{padding:64px 0 8px}
+.shead{display:flex; flex-direction:column; gap:10px; margin-bottom:28px; max-width:44em}
+.shead h2{font-size:clamp(1.7rem,3.2vw,2.3rem); font-weight:700; letter-spacing:-.015em}
+.shead p{margin:0; color:var(--muted)}
+
+.services{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+.services article{background:var(--card); padding:22px; display:flex; flex-direction:column; gap:8px}
+.services h3{font-size:1.12rem; font-weight:700}
+.services p{margin:0; color:var(--muted); font-size:.95rem}
+.tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:8px}
+.tags span{font:500 .72rem/1 var(--mono); padding:5px 7px; border:1px solid var(--line); border-radius:4px; color:var(--ink)}
+
+.work{display:flex; flex-direction:column; gap:0; border-top:1px solid var(--line)}
+.case{display:grid; grid-template-columns:200px 1fr; gap:28px; padding:28px 0; border-bottom:1px solid var(--line)}
+.case .meta{display:flex; flex-direction:column; gap:6px; font-size:.86rem; color:var(--muted)}
+.case h3{font-size:1.35rem; font-weight:700; margin-bottom:8px}
+.case p{margin:0 0 10px; max-width:62ch}
+.case ul{margin:0; padding-left:18px; color:var(--muted); max-width:62ch}
+.case li{margin:3px 0}
+.pill{align-self:flex-start; font:600 .72rem/1 var(--body); padding:6px 9px; border-radius:999px; background:var(--mark); color:var(--mark-ink)}
+
+/* demo */
+.demo{display:grid; grid-template-columns:.95fr 1.05fr; gap:28px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:26px}
+.controls{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.controls label{display:flex; flex-direction:column; gap:6px; font-size:.86rem; font-weight:600}
+.controls label small{font:400 .72rem/1 var(--mono); color:var(--muted)}
+.controls select{font:inherit; font-weight:400; padding:9px 10px; border:1px solid var(--line); border-radius:6px; background:var(--paper); color:var(--ink)}
+.presets{grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap; margin-top:4px}
+.presets button{font:500 .82rem/1 var(--body); padding:8px 11px; border-radius:6px; border:1px solid var(--line); background:transparent; color:var(--ink); cursor:pointer}
+.presets button:hover{border-color:var(--accent); color:var(--accent)}
+.result{display:flex; flex-direction:column; gap:18px}
+.bar{display:flex; flex-direction:column; gap:7px}
+.bar .lab{display:flex; justify-content:space-between; align-items:baseline; font-weight:600}
+.bar .lab b{font:800 1.9rem/1 var(--display); font-variant-numeric:tabular-nums}
+.track{height:12px; background:var(--paper); border:1px solid var(--line); border-radius:999px; overflow:hidden}
+.fill{height:100%; width:0; background:var(--accent); border-radius:999px; transition:width .45s ease}
+.fill.alt{background:var(--mark)}
+.verdict{padding:12px 14px; border-left:4px solid var(--accent); background:var(--paper); font-size:.95rem}
+.fine{font-size:.8rem; color:var(--muted); margin:0}
+
+.cols{display:grid; grid-template-columns:repeat(3,1fr); gap:28px}
+.cols h3{font-size:1.05rem; margin-bottom:10px}
+.cols ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px}
+.cols li{padding-bottom:10px; border-bottom:1px dashed var(--line)}
+.cols li strong{display:block}
+.cols li span{font-size:.88rem; color:var(--muted)}
+
+.contact{margin:64px 0 0; padding:44px 0 56px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:24px; align-items:end; flex-wrap:wrap}
+.contact h2{font-size:clamp(1.8rem,3.6vw,2.6rem); font-weight:800; letter-spacing:-.02em; max-width:16em}
+.contact p{color:var(--muted); margin:10px 0 0}
+
+@media (max-width:860px){
+  .hero,.demo{grid-template-columns:1fr}
+  .services,.cols{grid-template-columns:1fr}
+  .nums{grid-template-columns:repeat(2,1fr)}
+  .nums div:nth-child(2){border-right:0}
+  .nums div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .case{grid-template-columns:1fr; gap:10px}
+}
+@media (max-width:420px){ .controls{grid-template-columns:1fr} .wrap{padding:0 16px} }
+@media (prefers-reduced-motion:reduce){ .fill{transition:none} .btn:hover{transform:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <b>Mihret Ebabu</b>
+  <nav aria-label="Sections">
+    <a href="#services">Services</a><a href="#work">Work</a><a href="#demo">Live demo</a><a href="#about">Background</a><a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div>
+    <p class="who"><span class="dot" aria-hidden="true"></span>Research data manager &amp; software developer · Addis Ababa, Ethiopia · available for remote work</p>
+    <h1>From paper questionnaire to <em>clean, analysis-ready</em> data.</h1>
+    <p class="lead">I build the data systems behind health research: electronic data-capture forms in REDCap and KoboToolbox, cleaning and analysis in R and Python, dashboards in Power BI, and the software health workers actually use in the field.</p>
+    <div class="cta">
+      <a class="btn primary" href="#work">See selected work</a>
+      <a class="btn" href="https://www.linkedin.com/in/mihret-ebabu-37765043b">LinkedIn profile</a>
+    </div>
+  </div>
+
+  <figure class="dict" style="margin:0">
+    <header><span>data_dictionary.csv</span><span>REDCap format</span></header>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>variable</th><th>type</th><th>branching logic</th></tr></thead>
+      <tbody>
+        <tr><td>hh_id</td><td>text</td><td>—</td></tr>
+        <tr><td>llin_present</td><td>yesno</td><td>—</td></tr>
+        <tr><td>llin_count</td><td>integer</td><td class="logic">[llin_present] = '1'</td></tr>
+        <tr><td>water_storage</td><td>radio</td><td>—</td></tr>
+        <tr><td>larvae_seen</td><td>yesno</td><td class="logic">[water_storage] &lt;&gt; '0'</td></tr>
+        <tr><td>consent_date</td><td>date_ymd</td><td>—</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <figcaption><footer>Example rows in the style of the household-survey dictionaries I build. Illustrative only, not study data.</footer></figcaption>
+  </figure>
+</div>
+
+<div class="nums" role="list">
+  <div role="listitem"><strong>60+</strong><span>data-capture instruments built</span></div>
+  <div role="listitem"><strong>10,000+</strong><span>study participants covered</span></div>
+  <div role="listitem"><strong>3</strong><span>languages per survey: English, Amharic, Afan Oromo</span></div>
+  <div role="listitem"><strong>4.0</strong><span>BSc CGPA, Gold Medal</span></div>
+</div>
+
+<section id="services">
+  <div class="shead">
+    <span class="var">services</span>
+    <h2>What I can do for your project</h2>
+    <p>Hourly or fixed-price, fully remote. Clear handover notes come with every deliverable.</p>
+  </div>
+  <div class="services">
+    <article><h3>Data-capture forms</h3><p>Turn Word or paper questionnaires into tested REDCap projects or XLSForms, with validation, skip logic and consistent variable names.</p><div class="tags"><span>REDCap</span><span>KoboToolbox</span><span>ODK</span><span>XLSForm</span></div></article>
+    <article><h3>Data cleaning &amp; analysis</h3><p>Reproducible cleaning scripts, data-quality checks, descriptive and inferential analysis, and methods and results write-ups.</p><div class="tags"><span>R</span><span>Python</span><span>SPSS</span><span>Excel</span></div></article>
+    <article><h3>Dashboards &amp; reports</h3><p>Monitoring dashboards and tables for study teams, programmes and small organisations that need to see their numbers each week.</p><div class="tags"><span>Power BI</span><span>R</span><span>Excel</span></div></article>
+    <article><h3>Multilingual surveys</h3><p>Matching English, Amharic and Afan Oromo versions of one instrument, sharing the same variables and logic, so the data merge without rework.</p><div class="tags"><span>Amharic</span><span>Afan Oromo</span><span>English</span></div></article>
+    <article><h3>Web &amp; mobile apps</h3><p>Practical software for clinics, research teams and small businesses, from prototype to tested release.</p><div class="tags"><span>Mobile</span><span>Web</span><span>Databases</span></div></article>
+    <article><h3>Decision models</h3><p>Machine-learning classifiers and Bayesian networks that explain their reasoning, for diagnosis and risk questions.</p><div class="tags"><span>Machine learning</span><span>Bayesian networks</span></div></article>
+  </div>
+</section>
+
+<section id="work">
+  <div class="shead">
+    <span class="var">selected_work</span>
+    <h2>Selected work</h2>
+    <p>Project data stay confidential. These summaries describe my role and what was delivered.</p>
+  </div>
+  <div class="work">
+    <article class="case">
+      <div class="meta"><span class="pill">Validated prototype</span><span>Armauer Hansen Research Institute</span><span>Funded via ITM (D4D)</span></div>
+      <div>
+        <h3>TELE-DERM: telemedicine for skin disease</h3>
+        <p>A mobile telemedicine app that lets health workers send skin cases to dermatologists. I develop the app, and it is also my MSc Data Science thesis at Addis Ababa University.</p>
+        <ul><li>Prototype validated by health extension workers, expert dermatologists and policymakers</li><li>Stakeholder validation data collected through REDCap</li></ul>
+      </div>
+    </article>
+    <article class="case">
+      <div class="meta"><span class="pill">Field study</span><span>Malaria vector control</span><span>Metehara, Oromia</span></div>
+      <div>
+        <h3>Data infrastructure for a malaria vector-control study</h3>
+        <p>Converted Word field instruments into REDCap data dictionaries and XLSForms for a cluster-randomised trial setting.</p>
+        <ul><li>124-field REDCap dictionary for a household structure checklist covering bed nets, larval surveillance, water storage and building features</li><li>Branching logic and naming conventions checked across REDCap and ODK/Kobo</li></ul>
+      </div>
+    </article>
+    <article class="case">
+      <div class="meta"><span class="pill">National survey</span><span>Childhood vaccination</span><span>With the Ministry of Health</span></div>
+      <div>
+        <h3>Trilingual household vaccination-coverage survey</h3>
+        <p>Built the data dictionary for a household survey on childhood vaccination coverage and caregiver knowledge and attitudes.</p>
+        <ul><li>English, Amharic and Afan Oromo versions sharing variables, order and skip logic</li><li>Verified logic reused across languages, so the datasets merge cleanly</li></ul>
+      </div>
+    </article>
+    <article class="case">
+      <div class="meta"><span class="pill">Research output</span><span>Malaria research</span><span>2025–2026</span></div>
+      <div>
+        <h3>Co-authored malaria research publications</h3>
+        <p>Data cleaning, analysis and visualisation in R and Power BI, and drafting of methods and results sections.</p>
+      </div>
+    </article>
+    <article class="case">
+      <div class="meta"><span class="pill">Machine learning</span><span>Agriculture</span></div>
+      <div>
+        <h3>Coffee disease: image classifier and Bayesian decision model</h3>
+        <p>A machine-learning model that classifies coffee leaf and berry disease, and a Bayesian belief network for diagnosing Coffee Berry Disease in Jimma. Try the network in the <a href="#demo">live demo below</a>.</p>
+      </div>
+    </article>
+    <article class="case">
+      <div class="meta"><span class="pill">Software</span><span>Business system</span></div>
+      <div>
+        <h3>Hotel management platform</h3>
+        <p>A web platform for bookings, rooms and billing, built end to end.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="shead">
+    <span class="var">live_demo</span>
+    <h2>Diagnose Coffee Berry Disease with a Bayesian network</h2>
+    <p>Six variables, 13 parameters, exact inference in your browser. Set what a field agent has observed and watch the probabilities update. Probabilities are teaching values, not survey estimates.</p>
+  </div>
+  <div class="demo">
+    <div class="controls">
+      <label for="r">Kiremt rainfall <small>R</small>
+        <select id="r"><option value="">Unknown</option><option value="1">Heavy</option><option value="0">Normal</option></select></label>
+      <label for="v">Resistant variety <small>V</small>
+        <select id="v"><option value="">Unknown</option><option value="1">Yes</option><option value="0">No</option></select></label>
+      <label for="l">Heavy berry loss <small>L</small>
+        <select id="l"><option value="">Unknown</option><option value="1" selected>Observed</option><option value="0">Not observed</option></select></label>
+      <label for="t">Lab isolation test <small>T</small>
+        <select id="t"><option value="">Not done</option><option value="1" selected>Positive</option><option value="0">Negative</option></select></label>
+      <div class="presets" aria-label="Scenarios">
+        <button type="button" data-p="|||">No evidence</button>
+        <button type="button" data-p="||1|">Berry loss only</button>
+        <button type="button" data-p="||1|1">Loss + positive test</button>
+        <button type="button" data-p="||1|0">Loss + negative test</button>
+        <button type="button" data-p="1|0|1|1">High-risk farm</button>
+      </div>
+    </div>
+    <div class="result" aria-live="polite">
+      <div class="bar"><div class="lab"><span>Coffee Berry Disease</span><b id="pc">–</b></div><div class="track"><div class="fill" id="fc"></div></div></div>
+      <div class="bar"><div class="lab"><span>Coffee berry borer</span><b id="pb">–</b></div><div class="track"><div class="fill alt" id="fb"></div></div></div>
+      <div class="verdict" id="verdict">–</div>
+      <p class="fine">Computed by full enumeration of all 64 joint states. Network: R → C ← V, C → L ← B, C → T. Test sensitivity 88%, specificity 94%.</p>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="shead">
+    <span class="var">background</span>
+    <h2>Education, experience and tools</h2>
+  </div>
+  <div class="cols">
+    <div>
+      <h3>Experience</h3>
+      <ul>
+        <li><strong>Assistant Researcher, Data Manager</strong><span>Armauer Hansen Research Institute, Malaria &amp; NTD department · since Feb 2024</span></li>
+        <li><strong>IT intern</strong><span>Gage University College, Addis Ababa · Jul–Sep 2022</span></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Education</h3>
+      <ul>
+        <li><strong>MSc Data Science</strong><span>Addis Ababa University · final stage</span></li>
+        <li><strong>MSc Computer Science (Software Development)</strong><span>Universiti Malaysia Sabah · MTCP scholar</span></li>
+        <li><strong>BSc Computer Science</strong><span>Debark University, 2019–2023 · CGPA 4.0, Gold Medal</span></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Tools &amp; certifications</h3>
+      <ul>
+        <li><strong>Data capture</strong><span>REDCap, KoboToolbox, ODK, XLSForm</span></li>
+        <li><strong>Analysis &amp; reporting</strong><span>R, Python, Power BI, Excel</span></li>
+        <li><strong>Certifications</strong><span>Cisco CCNA, Huawei HCIA</span></li>
+        <li><strong>Languages</strong><span>Amharic (native), English (professional)</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="contact" id="contact">
+  <div>
+    <span class="var">contact</span>
+    <h2>Need clean data or a working data system?</h2>
+    <p>Message me on LinkedIn with a short description of your project and timeline.</p>
+  </div>
+  <a class="btn primary" href="https://www.linkedin.com/in/mihret-ebabu-37765043b">Message me on LinkedIn</a>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  // CPTs (teaching values)
+  var PR=0.35, PV=0.55, PB=0.15;
+  var PC={"11":0.15,"10":0.45,"01":0.04,"00":0.10};          // key: r v  -> P(C=1)
+  var PL={"11":0.95,"10":0.80,"01":0.70,"00":0.08};          // key: c b  -> P(L=1)
+  var PT={"1":0.88,"0":0.06};                                  // key: c    -> P(T=1)
+  function p(x,prob){return x?prob:1-prob}
+  function infer(ev){
+    var z=0,c1=0,b1=0;
+    for(var r=0;r<2;r++)for(var v=0;v<2;v++)for(var b=0;b<2;b++)for(var c=0;c<2;c++)for(var l=0;l<2;l++)for(var t=0;t<2;t++){
+      if(ev.r!==null&&ev.r!==r)continue; if(ev.v!==null&&ev.v!==v)continue;
+      if(ev.l!==null&&ev.l!==l)continue; if(ev.t!==null&&ev.t!==t)continue;
+      var w=p(r,PR)*p(v,PV)*p(b,PB)*p(c,PC[""+r+v])*p(l,PL[""+c+b])*p(t,PT[""+c]);
+      z+=w; if(c)c1+=w; if(b)b1+=w;
+    }
+    return {c:c1/z,b:b1/z};
+  }
+  var ids=["r","v","l","t"], el={};
+  ids.forEach(function(k){el[k]=document.getElementById(k)});
+  function read(k){var s=el[k].value;return s===""?null:+s}
+  function pct(x){return (x*100).toFixed(1)+"%"}
+  function verdict(c,b){
+    if(c>=0.85)return "Manage as Coffee Berry Disease: remove and destroy infected berries and plan fungicide control.";
+    if(b>c&&b>=0.4)return "The borer is now the more likely cause. Check berries for entry holes before spraying.";
+    if(c>=0.4)return "CBD is plausible but not confirmed. Send a berry sample for a laboratory test.";
+    return "CBD is unlikely on current evidence. Keep monitoring, especially in a wet season.";
+  }
+  function update(){
+    var res=infer({r:read("r"),v:read("v"),l:read("l"),t:read("t")});
+    document.getElementById("pc").textContent=pct(res.c);
+    document.getElementById("pb").textContent=pct(res.b);
+    document.getElementById("fc").style.width=(res.c*100)+"%";
+    document.getElementById("fb").style.width=(res.b*100)+"%";
+    document.getElementById("verdict").textContent=verdict(res.c,res.b);
+  }
+  ids.forEach(function(k){el[k].addEventListener("change",update)});
+  Array.prototype.forEach.call(document.querySelectorAll(".presets button"),function(btn){
+    btn.addEventListener("click",function(){
+      var parts=btn.getAttribute("data-p").split("|");
+      ids.forEach(function(k,i){el[k].value=parts[i]});
+      update();
+    });
+  });
+  update();
+})();
+</script>
+</body>
+</html>
