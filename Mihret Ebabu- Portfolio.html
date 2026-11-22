@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mihret Ebabu Portfolio</title>
+<meta name="description" content="Mihret Ebabu: research data manager and software developer in Addis Ababa. REDCap, KoboToolbox/ODK, R, Python, Power BI and health software for global health research.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a portfolio that behaves like a data system. Every page is keyed by a
+   monospace variable name, and the demos show field data becoming clean data. */
+:root{
+  --paper:#F3F6F5; --card:#FFFFFF; --ink:#0F2A2E; --muted:#51666A; --line:#D3DDDB;
+  --accent:#0B7A69; --accent-soft:#DDF0EC; --mark:#F5D04C; --mark-ink:#2B2300;
+  --bad:#B4382F; --bad-soft:#FBE4E1; --warn:#9A6A00; --warn-soft:#FFF1CC;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0C1A1C; --card:#13262A; --ink:#E5EEEC; --muted:#9DB2B0; --line:#26403F;
+    --accent:#3CC2A9; --accent-soft:#16372F; --mark:#E8C547; --mark-ink:#231C00;
+    --bad:#FF8A7E; --bad-soft:#3A1E1B; --warn:#F2C14E; --warn-soft:#352B12; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0C1A1C; --card:#13262A; --ink:#E5EEEC; --muted:#9DB2B0; --line:#26403F;
+  --accent:#3CC2A9; --accent-soft:#16372F; --mark:#E8C547; --mark-ink:#231C00;
+  --bad:#FF8A7E; --bad-soft:#3A1E1B; --warn:#F2C14E; --warn-soft:#352B12; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper); color:var(--ink); font:16px/1.6 var(--body); -webkit-font-smoothing:antialiased}
+a{color:var(--accent); text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--mark); outline-offset:2px}
+button{font:inherit; color:inherit; cursor:pointer}
+.wrap{max-width:1100px; margin:0 auto; padding:0 24px}
+h1,h2,h3{font-family:var(--display); text-wrap:balance; margin:0; line-height:1.08}
+.var{font:500 .78rem/1 var(--mono); letter-spacing:.02em; color:var(--accent)}
+.var::before{content:"["} .var::after{content:"]"}
+.muted{color:var(--muted)}
+
+/* ---------- top bar ---------- */
+.top{position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+.top .wrap{display:flex; align-items:center; gap:18px; height:64px}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font:700 1.05rem/1 var(--display); margin-right:auto}
+.brand i{display:grid; place-items:center; width:32px; height:32px; border-radius:8px; background:var(--ink); color:var(--paper); font:500 .8rem/1 var(--mono); font-style:normal}
+.nav{display:flex; gap:4px}
+.nav a{padding:8px 12px; border-radius:6px; text-decoration:none; color:var(--muted); font-weight:500; font-size:.95rem}
+.nav a:hover{color:var(--ink)}
+.nav a[aria-current="page"]{color:var(--ink); background:var(--card); box-shadow:inset 0 0 0 1px var(--line)}
+.iconbtn{display:grid; place-items:center; width:38px; height:38px; border-radius:8px; border:1px solid var(--line); background:var(--card)}
+.menu{display:none}
+@media (max-width:760px){
+  .nav{display:none; position:absolute; top:64px; left:0; right:0; flex-direction:column; padding:10px 16px 16px; background:var(--paper); border-bottom:1px solid var(--line)}
+  .nav.open{display:flex}
+  .menu{display:grid}
+}
+
+/* ---------- pages ---------- */
+.page{display:none; padding:48px 0 72px}
+.page.active{display:block; animation:rise .35s ease both}
+@keyframes rise{from{opacity:.0; transform:translateY(6px)} to{opacity:1; transform:none}}
+.shead{display:flex; flex-direction:column; gap:10px; margin-bottom:28px; max-width:46em}
+.shead h2{font-size:clamp(1.8rem,3.4vw,2.5rem); font-weight:700; letter-spacing:-.015em}
+.shead p{margin:0; color:var(--muted)}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:12px 18px; border-radius:8px; font-weight:600; text-decoration:none; border:1.5px solid var(--ink); color:var(--ink); background:transparent}
+.btn.primary{background:var(--ink); color:var(--paper)}
+.btn:hover{transform:translateY(-1px)}
+.row{display:flex; gap:12px; flex-wrap:wrap}
+
+/* home hero */
+.hero{display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:start}
+.status{font:500 .95rem/1.4 var(--body); margin:0 0 18px}
+.dot{width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; margin-right:8px; vertical-align:1px; box-shadow:0 0 0 0 var(--accent); animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 60%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.hero h1{font-size:clamp(2.4rem,5.4vw,4.2rem); font-weight:800; letter-spacing:-.025em}
+.hero h1 em{font-style:normal; background:linear-gradient(transparent 58%, var(--mark) 58%); padding:0 .08em}
+.lead{font-size:1.15rem; color:var(--muted); max-width:34em; margin:22px 0 28px}
+
+/* terminal-like dictionary that converts a question */
+.convert{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(15,42,46,.45)}
+.convert header{display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--line); font:500 .75rem/1.2 var(--mono); color:var(--muted)}
+.convert .q{padding:16px; border-bottom:1px dashed var(--line); min-height:92px}
+.convert .q b{display:block; font-weight:600; margin-bottom:6px}
+.convert .q span{font-size:.9rem; color:var(--muted)}
+.convert .arrow{display:flex; align-items:center; gap:8px; padding:8px 16px; font:500 .72rem/1 var(--mono); color:var(--accent); background:var(--accent-soft)}
+.convert pre{margin:0; padding:14px 16px; font:400 .8rem/1.55 var(--mono); white-space:pre-wrap; word-break:break-word; min-height:118px}
+.convert pre .k{color:var(--muted)} .convert pre .v{color:var(--accent)}
+.convert footer{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 12px; border-top:1px solid var(--line); font-size:.78rem; color:var(--muted)}
+.convert footer button{border:1px solid var(--line); background:transparent; border-radius:6px; padding:5px 9px; font-size:.78rem}
+
+.nums{display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin:48px 0 0}
+.nums div{padding:22px 18px; border-right:1px solid var(--line)}
+.nums div:last-child{border-right:0}
+.nums strong{display:block; font:800 2.1rem/1 var(--display); font-variant-numeric:tabular-nums; letter-spacing:-.02em}
+.nums span{font-size:.88rem; color:var(--muted)}
+
+.services{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-top:56px}
+.services article{background:var(--card); padding:22px; display:flex; flex-direction:column; gap:8px; transition:background .2s}
+.services article:hover{background:var(--accent-soft)}
+.services h3{font-size:1.12rem}
+.services p{margin:0; color:var(--muted); font-size:.95rem}
+.tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:8px}
+.tags span{font:500 .72rem/1 var(--mono); padding:5px 7px; border:1px solid var(--line); border-radius:4px}
+
+.cta-band{margin-top:56px; display:grid; grid-template-columns:1fr auto; gap:24px; align-items:center; padding:28px; border-radius:12px; background:var(--ink); color:var(--paper)}
+.cta-band h3{font-size:1.5rem}
+.cta-band p{margin:6px 0 0; opacity:.8}
+.cta-band .btn{border-color:var(--paper); color:var(--paper)}
+.cta-band .btn.primary{background:var(--mark); color:var(--mark-ink); border-color:var(--mark)}
+
+/* ---------- work ---------- */
+.filters{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px}
+.chip{border:1px solid var(--line); background:var(--card); border-radius:999px; padding:8px 14px; font-weight:500; font-size:.9rem}
+.chip[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+.card{display:flex; flex-direction:column; gap:10px; text-align:left; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; transition:transform .2s, border-color .2s, box-shadow .2s}
+.card:hover{transform:translateY(-3px); border-color:var(--accent); box-shadow:0 14px 30px -22px rgba(15,42,46,.5)}
+.card .kind{font:500 .72rem/1 var(--mono); color:var(--accent)}
+.card h3{font-size:1.2rem}
+.card p{margin:0; color:var(--muted); font-size:.93rem}
+.card .more{margin-top:auto; font-weight:600; font-size:.9rem; color:var(--accent)}
+.pill{align-self:flex-start; font:600 .72rem/1 var(--body); padding:6px 9px; border-radius:999px; background:var(--mark); color:var(--mark-ink)}
+.card[hidden]{display:none}
+
+dialog{border:1px solid var(--line); border-radius:14px; padding:0; max-width:640px; width:calc(100% - 32px); background:var(--card); color:var(--ink)}
+dialog::backdrop{background:rgba(6,18,20,.55)}
+.dlg{padding:26px}
+.dlg h3{font-size:1.6rem; margin:8px 0 10px}
+.dlg ul{padding-left:18px; color:var(--muted)}
+.dlg li{margin:5px 0}
+.dlg .close{float:right}
+.facts{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:16px 0}
+.facts div{border:1px solid var(--line); border-radius:8px; padding:10px 12px}
+.facts small{display:block; font:500 .7rem/1.2 var(--mono); color:var(--muted)}
+
+/* ---------- demos ---------- */
+.tabs{display:flex; gap:6px; border-bottom:1px solid var(--line); margin-bottom:24px; overflow-x:auto}
+.tab{border:0; background:transparent; padding:12px 14px; font-weight:600; color:var(--muted); border-bottom:3px solid transparent; white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--accent)}
+.panel{display:none}
+.panel.active{display:block}
+.box{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:22px}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:22px}
+.intro{margin:0 0 18px; color:var(--muted); max-width:62ch}
+
+/* form demo */
+.form{display:flex; flex-direction:column; gap:14px}
+.fq{display:flex; flex-direction:column; gap:6px; padding:12px; border:1px solid var(--line); border-radius:8px; transition:background .3s}
+.fq.new{background:var(--accent-soft)}
+.fq[hidden]{display:none}
+.fq label, .fq legend{font-weight:600; font-size:.93rem}
+.fq code{font:500 .72rem/1 var(--mono); color:var(--accent)}
+.fq input[type=number], .fq input[type=date], .fq select{font:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:var(--paper); color:var(--ink); max-width:240px}
+.fq fieldset{border:0; padding:0; margin:0}
+.opts{display:flex; gap:14px; flex-wrap:wrap; font-size:.93rem}
+.err{color:var(--bad); font-size:.84rem}
+.out h4{font:600 .8rem/1 var(--mono); color:var(--muted); margin:0 0 8px}
+.out table{width:100%; border-collapse:collapse; font:400 .76rem/1.4 var(--mono)}
+.out th,.out td{text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top}
+.out th{color:var(--muted); font-weight:500}
+.out tr.off td{color:var(--muted); opacity:.55}
+.out td.logic{color:var(--accent)}
+.scroll{overflow-x:auto}
+.record{margin-top:16px; padding:12px; border-radius:8px; background:var(--paper); border:1px solid var(--line); font:400 .78rem/1.5 var(--mono); white-space:pre-wrap; word-break:break-word}
+
+/* QC demo */
+.qcbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px}
+.qc table{width:100%; border-collapse:collapse; font:400 .82rem/1.4 var(--mono); min-width:620px}
+.qc th,.qc td{padding:8px 10px; border-bottom:1px solid var(--line); text-align:left}
+.qc th{color:var(--muted); font-weight:500}
+.qc td.flag{background:var(--bad-soft); color:var(--bad); font-weight:500}
+.qc td.fixed{background:var(--accent-soft); color:var(--accent); font-weight:500}
+.qc tr.dup td{background:var(--warn-soft)}
+.issues{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0}
+.issues div{border:1px solid var(--line); border-radius:8px; padding:10px 12px}
+.issues strong{display:block; font:800 1.6rem/1 var(--display); font-variant-numeric:tabular-nums}
+.issues span{font-size:.82rem; color:var(--muted)}
+.log{margin:0; padding-left:18px; color:var(--muted); font-size:.9rem}
+.log li{margin:4px 0}
+
+/* BBN demo */
+.controls{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.controls label{display:flex; flex-direction:column; gap:6px; font-size:.88rem; font-weight:600}
+.controls select{font:inherit; font-weight:400; padding:9px 10px; border:1px solid var(--line); border-radius:6px; background:var(--paper); color:var(--ink)}
+.presets{grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap}
+.presets button{font-size:.82rem; padding:8px 11px; border-radius:6px; border:1px solid var(--line); background:transparent}
+.presets button:hover{border-color:var(--accent); color:var(--accent)}
+.result{display:flex; flex-direction:column; gap:18px}
+.bar .lab{display:flex; justify-content:space-between; align-items:baseline; font-weight:600; margin-bottom:7px}
+.bar .lab b{font:800 1.9rem/1 var(--display); font-variant-numeric:tabular-nums}
+.track{height:12px; background:var(--paper); border:1px solid var(--line); border-radius:999px; overflow:hidden}
+.fill{height:100%; width:0; background:var(--accent); border-radius:999px; transition:width .45s ease}
+.fill.alt{background:var(--mark)}
+.verdict{padding:12px 14px; border-left:4px solid var(--accent); background:var(--paper); font-size:.95rem}
+.net{display:block; width:100%; height:auto; margin-top:6px}
+.net text{font:500 11px var(--body); fill:var(--ink)}
+.net rect{fill:var(--paper); stroke:var(--line); stroke-width:1.5}
+.net rect.on{fill:var(--accent-soft); stroke:var(--accent)}
+.net line{stroke:var(--muted); stroke-width:1.3}
+.fine{font-size:.8rem; color:var(--muted); margin:0}
+
+/* ---------- about ---------- */
+.timeline{position:relative; margin:0; padding:0 0 0 22px; list-style:none; border-left:2px solid var(--line)}
+.timeline li{position:relative; padding:0 0 26px 18px}
+.timeline li::before{content:""; position:absolute; left:-30px; top:6px; width:14px; height:14px; border-radius:50%; background:var(--card); border:3px solid var(--accent)}
+.timeline time{font:500 .78rem/1 var(--mono); color:var(--accent)}
+.timeline h3{font-size:1.15rem; margin:6px 0 4px}
+.timeline p{margin:0; color:var(--muted)}
+.aboutgrid{display:grid; grid-template-columns:1.2fr .8fr; gap:40px}
+.stack{display:flex; flex-direction:column; gap:16px}
+.stack h3{font-size:1rem; margin-bottom:8px}
+
+/* ---------- contact ---------- */
+.contact{display:grid; grid-template-columns:1fr 1fr; gap:28px}
+.brief label{display:flex; flex-direction:column; gap:6px; font-weight:600; font-size:.9rem; margin-bottom:14px}
+.brief select,.brief textarea,.brief input{font:inherit; font-weight:400; padding:10px; border:1px solid var(--line); border-radius:6px; background:var(--paper); color:var(--ink)}
+.brief textarea{min-height:110px; resize:vertical}
+.msg{white-space:pre-wrap; font:400 .85rem/1.5 var(--mono); padding:14px; border-radius:8px; background:var(--paper); border:1px dashed var(--line); min-height:120px}
+.copied{font-size:.85rem; color:var(--accent); min-height:1.2em}
+
+footer.site{border-top:1px solid var(--line); padding:22px 0 40px; font-size:.85rem; color:var(--muted)}
+
+@media (max-width:900px){
+  .hero,.two,.aboutgrid,.contact,.cta-band{grid-template-columns:1fr}
+  .grid,.services{grid-template-columns:1fr 1fr}
+  .issues{grid-template-columns:1fr 1fr}
+}
+@media (max-width:600px){
+  .wrap{padding:0 16px}
+  .grid,.services,.controls,.facts{grid-template-columns:1fr}
+  .nums{grid-template-columns:1fr 1fr}
+  .nums div:nth-child(2){border-right:0}
+  .nums div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important}
+  .btn:hover,.card:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#home"><i>ME</i>Mihret Ebabu</a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#home">Home</a><a href="#work">Work</a><a href="#demos">Live demos</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </nav>
+    <button class="iconbtn" id="theme" type="button" aria-label="Switch dark or light theme" title="Switch theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+    <button class="iconbtn menu" id="menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ================= HOME ================= -->
+<section class="page" id="page-home" data-page="home">
+  <div class="hero">
+    <div>
+      <p class="status"><span class="dot" aria-hidden="true"></span>Research data manager &amp; software developer · Addis Ababa · open to remote work</p>
+      <h1>From paper questionnaire to <em>clean, analysis-ready</em> data.</h1>
+      <p class="lead">I build the data systems behind health research: data-capture forms in REDCap and KoboToolbox, cleaning and analysis in R and Python, Power BI dashboards, and the software health workers use in the field.</p>
+      <div class="row">
+        <a class="btn primary" href="#demos">Try the live demos</a>
+        <a class="btn" href="#work">See my work</a>
+      </div>
+    </div>
+
+    <figure class="convert" style="margin:0" aria-label="A survey question converted into a REDCap field">
+      <header><span>questionnaire → data_dictionary.csv</span><span id="cvn">1 / 4</span></header>
+      <div class="q" id="cq"></div>
+      <div class="arrow">↓ converted to a REDCap field</div>
+      <pre id="cd"></pre>
+      <footer><span>Illustrative questions, not study data</span><button type="button" id="cnext">Next question</button></footer>
+    </figure>
+  </div>
+
+  <div class="nums" role="list">
+    <div role="listitem"><strong>60+</strong><span>data-capture instruments built</span></div>
+    <div role="listitem"><strong>10,000+</strong><span>study participants covered</span></div>
+    <div role="listitem"><strong>3</strong><span>survey languages: English, Amharic, Afan Oromo</span></div>
+    <div role="listitem"><strong>4.0</strong><span>BSc CGPA, Gold Medal</span></div>
+  </div>
+
+  <div class="services">
+    <article><h3>Data-capture forms</h3><p>Word or paper questionnaires turned into tested REDCap projects or XLSForms, with validation, skip logic and consistent variable names.</p><div class="tags"><span>REDCap</span><span>KoboToolbox</span><span>ODK</span><span>XLSForm</span></div></article>
+    <article><h3>Data cleaning &amp; analysis</h3><p>Reproducible cleaning scripts, data-quality checks, descriptive and inferential analysis, and methods and results write-ups.</p><div class="tags"><span>R</span><span>Python</span><span>SPSS</span><span>Excel</span></div></article>
+    <article><h3>Dashboards &amp; reports</h3><p>Monitoring dashboards for study teams, programmes and small organisations that need to see their numbers every week.</p><div class="tags"><span>Power BI</span><span>R</span><span>Excel</span></div></article>
+    <article><h3>Multilingual surveys</h3><p>English, Amharic and Afan Oromo versions of one instrument sharing the same variables and logic, so the data merge without rework.</p><div class="tags"><span>Amharic</span><span>Afan Oromo</span><span>English</span></div></article>
+    <article><h3>Web &amp; mobile apps</h3><p>Practical software for clinics, research teams and small businesses, from prototype to tested release.</p><div class="tags"><span>Mobile</span><span>Web</span><span>Databases</span></div></article>
+    <article><h3>Decision models</h3><p>Machine-learning classifiers and Bayesian networks that show their reasoning, for diagnosis and risk questions.</p><div class="tags"><span>Machine learning</span><span>Bayesian networks</span></div></article>
+  </div>
+
+  <div class="cta-band">
+    <div><h3>Have a survey, dataset or app in mind?</h3><p>Describe it in a few clicks and send me the brief.</p></div>
+    <div class="row"><a class="btn primary" href="#contact">Start a project</a><a class="btn" href="#about">About me</a></div>
+  </div>
+</section>
+
+<!-- ================= WORK ================= -->
+<section class="page" id="page-work" data-page="work">
+  <div class="shead">
+    <span class="var">selected_work</span>
+    <h2>Selected work</h2>
+    <p>Project data stay confidential. These summaries describe my role and what was delivered. Open a project for details.</p>
+  </div>
+  <div class="filters" role="group" aria-label="Filter projects">
+    <button class="chip" type="button" data-f="all" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-f="data" aria-pressed="false">Data capture</button>
+    <button class="chip" type="button" data-f="software" aria-pressed="false">Software</button>
+    <button class="chip" type="button" data-f="research" aria-pressed="false">Research &amp; analysis</button>
+    <button class="chip" type="button" data-f="ml" aria-pressed="false">Machine learning</button>
+  </div>
+  <div class="grid" id="cards"></div>
+</section>
+
+<dialog id="dlg" aria-labelledby="dlg-title"><div class="dlg" id="dlg-body"></div></dialog>
+
+<!-- ================= DEMOS ================= -->
+<section class="page" id="page-demos" data-page="demos">
+  <div class="shead">
+    <span class="var">live_demos</span>
+    <h2>Live demos of my work</h2>
+    <p>Three small tools that show how I work with research data. Everything runs in your browser on example data.</p>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Demos">
+    <button class="tab" role="tab" id="t-form" aria-controls="p-form" aria-selected="true">1 · Smart survey form</button>
+    <button class="tab" role="tab" id="t-qc" aria-controls="p-qc" aria-selected="false">2 · Data-quality checker</button>
+    <button class="tab" role="tab" id="t-bbn" aria-controls="p-bbn" aria-selected="false">3 · Disease diagnosis model</button>
+  </div>
+
+  <!-- Demo 1 -->
+  <div class="panel active" id="p-form" role="tabpanel" aria-labelledby="t-form">
+    <p class="intro">Fill in this household survey the way a data collector would. Questions appear only when their branching logic is true, invalid answers are caught at entry, and the data dictionary and saved record update live.</p>
+    <div class="two">
+      <div class="box form" id="sform">
+        <div class="fq"><label for="f_hh">Household ID <code>hh_id</code></label><input id="f_hh" type="number" min="1000" max="9999" value="1042"><span class="err" id="e_hh"></span></div>
+        <div class="fq"><fieldset><legend>Does the household own a bed net (LLIN)? <code>llin_present</code></legend>
+          <div class="opts"><label><input type="radio" name="llin" value="1" checked> Yes</label><label><input type="radio" name="llin" value="0"> No</label></div></fieldset></div>
+        <div class="fq" id="q_count"><label for="f_count">How many bed nets? <code>llin_count</code></label><input id="f_count" type="number" min="1" max="20" value="2"><span class="err" id="e_count"></span></div>
+        <div class="fq" id="q_slept"><fieldset><legend>Did anyone sleep under a net last night? <code>llin_used</code></legend>
+          <div class="opts"><label><input type="radio" name="used" value="1" checked> Yes</label><label><input type="radio" name="used" value="0"> No</label></div></fieldset></div>
+        <div class="fq"><label for="f_water">Main water storage <code>water_storage</code></label>
+          <select id="f_water"><option value="0">None</option><option value="1" selected>Open barrel</option><option value="2">Covered jerrycan</option></select></div>
+        <div class="fq" id="q_larvae"><fieldset><legend>Mosquito larvae seen in stored water? <code>larvae_seen</code></legend>
+          <div class="opts"><label><input type="radio" name="larvae" value="1"> Yes</label><label><input type="radio" name="larvae" value="0" checked> No</label></div></fieldset></div>
+      </div>
+      <div class="box out">
+        <h4>data_dictionary.csv (live)</h4>
+        <div class="scroll"><table><thead><tr><th>variable</th><th>type</th><th>validation</th><th>branching logic</th></tr></thead><tbody id="dd"></tbody></table></div>
+        <div class="record" id="rec" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo 2 -->
+  <div class="panel" id="p-qc" role="tabpanel" aria-labelledby="t-qc">
+    <p class="intro">Field data always arrive with errors. Run my standard checks on this example export to flag duplicates, impossible values, broken skip logic and missing dates, then apply the fixes a data manager would query with the field team.</p>
+    <div class="box qc">
+      <div class="qcbar">
+        <button class="btn primary" type="button" id="qcrun">Run quality checks</button>
+        <button class="btn" type="button" id="qcfix" disabled>Apply suggested fixes</button>
+        <button class="btn" type="button" id="qcreset">Reset data</button>
+      </div>
+      <div class="issues" id="qcsum">
+        <div><strong id="n-rows">10</strong><span>records</span></div>
+        <div><strong id="n-dup">–</strong><span>duplicate IDs</span></div>
+        <div><strong id="n-range">–</strong><span>out-of-range values</span></div>
+        <div><strong id="n-logic">–</strong><span>skip-logic / missing errors</span></div>
+      </div>
+      <div class="scroll"><table><thead><tr><th>hh_id</th><th>visit_date</th><th>resp_age</th><th>llin_present</th><th>llin_count</th><th>larvae_seen</th></tr></thead><tbody id="qcbody"></tbody></table></div>
+      <ul class="log" id="qclog"><li>Press “Run quality checks” to scan the records.</li></ul>
+    </div>
+  </div>
+
+  <!-- Demo 3 -->
+  <div class="panel" id="p-bbn" role="tabpanel" aria-labelledby="t-bbn">
+    <p class="intro">A Bayesian belief network for Coffee Berry Disease in Jimma, from my MSc coursework. Set what a field agent has observed; the network updates both possible causes of berry loss by exact inference. Probabilities are teaching values, not survey estimates.</p>
+    <div class="two box">
+      <div>
+        <div class="controls">
+          <label for="r">Kiremt rainfall<select id="r"><option value="">Unknown</option><option value="1">Heavy</option><option value="0">Normal</option></select></label>
+          <label for="v">Resistant variety<select id="v"><option value="">Unknown</option><option value="1">Yes</option><option value="0">No</option></select></label>
+          <label for="l">Heavy berry loss<select id="l"><option value="">Unknown</option><option value="1" selected>Observed</option><option value="0">Not observed</option></select></label>
+          <label for="t">Lab isolation test<select id="t"><option value="">Not done</option><option value="1" selected>Positive</option><option value="0">Negative</option></select></label>
+          <div class="presets" aria-label="Scenarios">
+            <button type="button" data-p="|||">No evidence</button>
+            <button type="button" data-p="||1|">Berry loss only</button>
+            <button type="button" data-p="||1|1">+ positive test</button>
+            <button type="button" data-p="||1|0">+ negative test</button>
+            <button type="button" data-p="1|0|1|1">High-risk farm</button>
+          </div>
+        </div>
+        <svg class="net" viewBox="0 0 420 190" role="img" aria-label="Network: rainfall and variety cause CBD; CBD and borer cause berry loss; CBD causes the lab result">
+          <line x1="70" y1="40" x2="165" y2="95"/><line x1="210" y1="40" x2="190" y2="95"/><line x1="350" y1="40" x2="300" y2="150"/>
+          <line x1="160" y1="115" x2="90" y2="150"/><line x1="200" y1="115" x2="270" y2="150"/>
+          <rect id="nR" x="15" y="18" width="110" height="28" rx="6"/><text x="70" y="36" text-anchor="middle">Rainfall (R)</text>
+          <rect id="nV" x="155" y="18" width="110" height="28" rx="6"/><text x="210" y="36" text-anchor="middle">Variety (V)</text>
+          <rect x="295" y="18" width="110" height="28" rx="6"/><text x="350" y="36" text-anchor="middle">Borer (B)</text>
+          <rect x="120" y="92" width="130" height="28" rx="6" style="stroke:var(--accent)"/><text x="185" y="110" text-anchor="middle">Coffee Berry Disease</text>
+          <rect id="nT" x="30" y="150" width="110" height="28" rx="6"/><text x="85" y="168" text-anchor="middle">Lab test (T)</text>
+          <rect id="nL" x="220" y="150" width="120" height="28" rx="6"/><text x="280" y="168" text-anchor="middle">Berry loss (L)</text>
+        </svg>
+      </div>
+      <div class="result" aria-live="polite">
+        <div class="bar"><div class="lab"><span>Coffee Berry Disease</span><b id="pc">–</b></div><div class="track"><div class="fill" id="fc"></div></div></div>
+        <div class="bar"><div class="lab"><span>Coffee berry borer</span><b id="pb">–</b></div><div class="track"><div class="fill alt" id="fb"></div></div></div>
+        <div class="verdict" id="verdict">–</div>
+        <p class="fine">Exact inference over all 64 joint states. Highlighted boxes are observed. Test sensitivity 88%, specificity 94%.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="page" id="page-about" data-page="about">
+  <div class="shead">
+    <span class="var">about</span>
+    <h2>About me</h2>
+    <p>I am a computer scientist who works where software meets field research. Most of my work starts with a paper questionnaire and ends with a dataset a statistician can trust.</p>
+  </div>
+  <div class="aboutgrid">
+    <ol class="timeline">
+      <li><time>2026 – now</time><h3>MSc Computer Science (Software Development)</h3><p>Universiti Malaysia Sabah · MTCP scholar</p></li>
+      <li><time>Final stage</time><h3>MSc Data Science</h3><p>Addis Ababa University · thesis: TELE-DERM telemedicine app</p></li>
+      <li><time>Feb 2024 – now</time><h3>Assistant Researcher, Data Manager &amp; Software Developer</h3><p>Armauer Hansen Research Institute, Malaria &amp; Neglected Tropical Diseases department. Data systems for malaria, NTD, vaccination and digital-health studies, with partners including ITM and LSHTM.</p></li>
+      <li><time>2019 – 2023</time><h3>BSc Computer Science</h3><p>Debark University · CGPA 4.0, Gold Medal for Academic Excellence</p></li>
+      <li><time>Jul – Sep 2022</time><h3>IT intern</h3><p>Gage University College, Addis Ababa</p></li>
+    </ol>
+    <div class="stack">
+      <div class="box"><h3>Data capture</h3><div class="tags"><span>REDCap</span><span>KoboToolbox</span><span>ODK</span><span>XLSForm</span></div></div>
+      <div class="box"><h3>Analysis &amp; reporting</h3><div class="tags"><span>R</span><span>Python</span><span>Power BI</span><span>Excel</span><span>SPSS</span></div></div>
+      <div class="box"><h3>Software</h3><div class="tags"><span>Web apps</span><span>Mobile apps</span><span>Databases</span><span>Machine learning</span></div></div>
+      <div class="box"><h3>Certifications</h3><div class="tags"><span>Cisco CCNA</span><span>Huawei HCIA</span></div></div>
+      <div class="box"><h3>Languages</h3><div class="tags"><span>Amharic · native</span><span>English · professional</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="page" id="page-contact" data-page="contact">
+  <div class="shead">
+    <span class="var">contact</span>
+    <h2>Start a project</h2>
+    <p>Pick what you need and I will reply with a plan and a quote. The brief is written for you; copy it and send it to me on LinkedIn.</p>
+  </div>
+  <div class="contact">
+    <form class="box brief" id="brief">
+      <label for="b-type">What do you need?
+        <select id="b-type">
+          <option>A REDCap or KoboToolbox data-capture form</option>
+          <option>Data cleaning and analysis</option>
+          <option>A Power BI dashboard</option>
+          <option>A web or mobile app</option>
+          <option>A translated (Amharic / Afan Oromo) survey</option>
+        </select></label>
+      <label for="b-time">Timeline
+        <select id="b-time"><option>Within a week</option><option>Within a month</option><option>Flexible</option></select></label>
+      <label for="b-name">Your name<input id="b-name" type="text" placeholder="e.g. Study coordinator, Project X"></label>
+      <label for="b-note">Short description<textarea id="b-note" placeholder="e.g. 80-question household survey, two languages, data collection starts in March."></textarea></label>
+    </form>
+    <div class="box" style="display:flex; flex-direction:column; gap:14px">
+      <h3 style="font-size:1.1rem">Your message</h3>
+      <div class="msg" id="msg"></div>
+      <div class="row">
+        <button class="btn primary" type="button" id="copy">Copy message</button>
+        <a class="btn" href="https://www.linkedin.com/in/mihret-ebabu-37765043b">Open my LinkedIn</a>
+      </div>
+      <div class="copied" id="copied" aria-live="polite"></div>
+      <p class="fine">LinkedIn: linkedin.com/in/mihret-ebabu-37765043b</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site"><div class="wrap">© Mihret Ebabu · Research data management and software development · Addis Ababa, Ethiopia</div></footer>
+
+<script>
+(function(){
+  /* ---------- theme ---------- */
+  var root=document.documentElement;
+  try{var saved=localStorage.getItem("me-theme"); if(saved) root.setAttribute("data-theme",saved);}catch(e){}
+  document.getElementById("theme").addEventListener("click",function(){
+    var cur=root.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+    var next=cur==="dark"?"light":"dark"; root.setAttribute("data-theme",next);
+    try{localStorage.setItem("me-theme",next);}catch(e){}
+  });
+
+  /* ---------- routing ---------- */
+  var pages=["home","work","demos","about","contact"];
+  var nav=document.getElementById("nav"), menu=document.getElementById("menu");
+  function route(){
+    var h=(location.hash||"#home").slice(1); if(pages.indexOf(h)<0) h="home";
+    pages.forEach(function(p){document.getElementById("page-"+p).classList.toggle("active",p===h)});
+    Array.prototype.forEach.call(nav.querySelectorAll("a"),function(a){
+      if(a.getAttribute("href")==="#"+h) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+    });
+    nav.classList.remove("open"); menu.setAttribute("aria-expanded","false");
+    window.scrollTo(0,0);
+  }
+  window.addEventListener("hashchange",route);
+  menu.addEventListener("click",function(){var o=nav.classList.toggle("open"); menu.setAttribute("aria-expanded",o?"true":"false")});
+  route();
+
+  /* ---------- hero converter ---------- */
+  var conv=[
+    {q:"Q12. Does this household own a long-lasting insecticidal net?",o:"Yes / No",d:[["variable","llin_present"],["field_type","yesno"],["required","y"]]},
+    {q:"Q13. If yes, how many nets does the household own?",o:"Number, 1–20",d:[["variable","llin_count"],["field_type","text"],["validation","integer, 1–20"],["branching","[llin_present] = '1'"]]},
+    {q:"Q14. ቤተሰቡ የወባ ትንኝ መከላከያ አጎበር አለው?",o:"Amharic version of Q12",d:[["variable","llin_present"],["field_label","ቤተሰቡ የወባ ትንኝ መከላከያ አጎበር አለው?"],["note","same name and logic as English"]]},
+    {q:"Q20. Date the respondent gave consent",o:"Date",d:[["variable","consent_date"],["field_type","text"],["validation","date_ymd, not in future"],["required","y"]]}
+  ];
+  var ci=0;
+  function showConv(){
+    var c=conv[ci];
+    document.getElementById("cq").innerHTML="<b></b><span></span>";
+    document.querySelector("#cq b").textContent=c.q; document.querySelector("#cq span").textContent="Answer: "+c.o;
+    var pre=document.getElementById("cd"); pre.textContent="";
+    c.d.forEach(function(kv){var k=document.createElement("span");k.className="k";k.textContent=(kv[0]+":").padEnd(13," ");
+      var v=document.createElement("span");v.className="v";v.textContent=kv[1]+"\n";pre.appendChild(k);pre.appendChild(v)});
+    document.getElementById("cvn").textContent=(ci+1)+" / "+conv.length;
+  }
+  document.getElementById("cnext").addEventListener("click",function(){ci=(ci+1)%conv.length;showConv()});
+  showConv();
+
+  /* ---------- work ---------- */
+  var projects=[
+    {id:"teleder",cat:"software research",kind:"Mobile app · Telemedicine",pill:"Validated prototype",title:"TELE-DERM: telemedicine for skin disease",
+     sum:"A mobile app that lets health workers send skin cases to dermatologists. Also my MSc Data Science thesis.",
+     facts:[["Organisation","Armauer Hansen Research Institute"],["Funding","Via ITM (D4D programme)"],["My role","Developer and data lead"],["Status","Prototype validated"]],
+     pts:["Mobile app for health workers to capture and share skin cases with dermatologists","Prototype validated by health extension workers, expert dermatologists and policymakers","Stakeholder validation data collected and managed in REDCap","Written up as my MSc Data Science thesis at Addis Ababa University"]},
+    {id:"malaria",cat:"data",kind:"REDCap · XLSForm",pill:"Field study",title:"Data system for a malaria vector-control study",
+     sum:"Word field instruments converted into REDCap dictionaries and XLSForms for a study in Metehara, Oromia.",
+     facts:[["Setting","Metehara, Oromia"],["Design","Cluster-randomised trial setting"],["Largest form","124 fields"],["Platforms","REDCap, ODK/Kobo"]],
+     pts:["124-field REDCap dictionary for a household structure checklist: bed nets, larval surveillance, water storage and building features","Matching XLSForm versions for mobile data collection","Branching logic and variable naming checked across platforms"]},
+    {id:"vacc",cat:"data",kind:"Multilingual survey",pill:"National survey",title:"Trilingual vaccination-coverage survey",
+     sum:"Data dictionary for a household survey on childhood vaccination, in English, Amharic and Afan Oromo.",
+     facts:[["Topic","Childhood vaccination coverage"],["Partners","With the Ministry of Health"],["Languages","English, Amharic, Afan Oromo"],["Output","REDCap-style dictionary"]],
+     pts:["Variables, field types, choices, validation and skip logic built from the Word questionnaire","Amharic and Afan Oromo versions reuse the verified English logic, so all datasets merge cleanly","Covers coverage, caregiver knowledge and attitudes, and a planned mobile reminder system"]},
+    {id:"pubs",cat:"research",kind:"R · Power BI",pill:"Research output",title:"Co-authored malaria research",
+     sum:"Data cleaning, analysis and visualisation for malaria publications, 2025–2026.",
+     facts:[["Years","2025–2026"],["Tools","R, Power BI"],["Role","Co-author"],["Writing","Methods and results"]],
+     pts:["Cleaned and analysed study data in R","Built figures and dashboards in Power BI","Drafted methods and results sections"]},
+    {id:"coffee",cat:"ml research",kind:"Machine learning · Bayesian network",pill:"Decision model",title:"Coffee disease diagnosis models",
+     sum:"An image classifier for coffee disease and a Bayesian network for Coffee Berry Disease in Jimma.",
+     facts:[["Domain","Ethiopian coffee farming"],["Models","CNN classifier, Bayesian network"],["Network","6 nodes, 13 parameters"],["Demo","Live on this site"]],
+     pts:["Machine-learning model that classifies coffee disease from images","Bayesian belief network that separates Coffee Berry Disease from the berry borer","Inference checked three ways: enumeration, variable elimination and likelihood weighting"],link:"#demos"},
+    {id:"hotel",cat:"software",kind:"Web app",pill:"Software",title:"Hotel management platform",
+     sum:"A web platform for bookings, rooms and billing, built end to end.",
+     facts:[["Type","Web application"],["Modules","Bookings, rooms, billing"],["Role","Full-stack developer"],["Scope","End to end"]],
+     pts:["Room and booking management","Billing and reporting","Designed, built and tested end to end"]}
+  ];
+  var cards=document.getElementById("cards");
+  projects.forEach(function(p){
+    var b=document.createElement("button"); b.type="button"; b.className="card"; b.dataset.cat=p.cat;
+    b.innerHTML='<span class="pill"></span><span class="kind"></span><h3></h3><p></p><span class="more">View details →</span>';
+    b.querySelector(".pill").textContent=p.pill; b.querySelector(".kind").textContent=p.kind;
+    b.querySelector("h3").textContent=p.title; b.querySelector("p").textContent=p.sum;
+    b.addEventListener("click",function(){openProject(p)}); cards.appendChild(b);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"),function(c){
+    c.addEventListener("click",function(){
+      var f=c.dataset.f;
+      document.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===c?"true":"false")});
+      Array.prototype.forEach.call(cards.children,function(card){card.hidden=!(f==="all"||card.dataset.cat.split(" ").indexOf(f)>=0)});
+    });
+  });
+  var dlg=document.getElementById("dlg"), body=document.getElementById("dlg-body");
+  function openProject(p){
+    body.innerHTML='<button class="iconbtn close" type="button" aria-label="Close">✕</button><span class="pill"></span><h3 id="dlg-title"></h3><p class="muted"></p><div class="facts"></div><ul></ul>';
+    body.querySelector(".pill").textContent=p.pill; body.querySelector("h3").textContent=p.title; body.querySelector("p").textContent=p.sum;
+    p.facts.forEach(function(f){var d=document.createElement("div");d.innerHTML="<small></small><span></span>";d.querySelector("small").textContent=f[0];d.querySelector("span").textContent=f[1];body.querySelector(".facts").appendChild(d)});
+    p.pts.forEach(function(t){var li=document.createElement("li");li.textContent=t;body.querySelector("ul").appendChild(li)});
+    if(p.link){var a=document.createElement("a");a.className="btn primary";a.href=p.link;a.textContent="Try the live model";a.addEventListener("click",function(){dlg.close();setTimeout(function(){selectTab("t-bbn")},50)});body.appendChild(a)}
+    body.querySelector(".close").addEventListener("click",function(){dlg.close()});
+    if(dlg.showModal) dlg.showModal(); else dlg.setAttribute("open","");
+  }
+  dlg.addEventListener("click",function(e){if(e.target===dlg) dlg.close()});
+
+  /* ---------- tabs ---------- */
+  var tabs=document.querySelectorAll(".tab");
+  function selectTab(id){
+    tabs.forEach(function(t){var on=t.id===id;t.setAttribute("aria-selected",on?"true":"false");document.getElementById(t.getAttribute("aria-controls")).classList.toggle("active",on)});
+  }
+  tabs.forEach(function(t){t.addEventListener("click",function(){selectTab(t.id)})});
+
+  /* ---------- demo 1: smart form ---------- */
+  var F=function(id){return document.getElementById(id)};
+  function radio(n){var r=document.querySelector('input[name="'+n+'"]:checked');return r?r.value:""}
+  var dict=[
+    ["hh_id","text","integer 1000–9999",""],
+    ["llin_present","yesno","",""],
+    ["llin_count","text","integer 1–20","[llin_present] = '1'"],
+    ["llin_used","yesno","","[llin_present] = '1'"],
+    ["water_storage","radio","0, None | 1, Open barrel | 2, Covered jerrycan",""],
+    ["larvae_seen","yesno","","[water_storage] <> '0'"]
+  ];
+  var prevShow={};
+  function formUpdate(){
+    var llin=radio("llin"), water=F("f_water").value;
+    var show={llin_count:llin==="1",llin_used:llin==="1",larvae_seen:water!=="0"};
+    [["q_count","llin_count"],["q_slept","llin_used"],["q_larvae","larvae_seen"]].forEach(function(x){
+      var el=F(x[0]); el.hidden=!show[x[1]];
+      if(show[x[1]]&&prevShow[x[1]]===false){el.classList.add("new");setTimeout(function(){el.classList.remove("new")},900)}
+      prevShow[x[1]]=show[x[1]];
+    });
+    var hh=F("f_hh").value, cnt=F("f_count").value;
+    var eh=(hh===""||+hh<1000||+hh>9999)?"Must be a 4-digit household ID (1000–9999).":"";
+    var ec=(show.llin_count&&(cnt===""||+cnt<1||+cnt>20||+cnt%1))?"Enter a whole number from 1 to 20.":"";
+    F("e_hh").textContent=eh; F("e_count").textContent=ec;
+    var tb=F("dd"); tb.innerHTML="";
+    dict.forEach(function(r){
+      var tr=document.createElement("tr"); var active=!(r[0] in show)||show[r[0]]; if(!active) tr.className="off";
+      r.forEach(function(c,i){var td=document.createElement("td");td.textContent=c||"—";if(i===3&&c)td.className="logic";tr.appendChild(td)});
+      tb.appendChild(tr);
+    });
+    var rec={hh_id:hh,llin_present:llin,llin_count:show.llin_count?cnt:"",llin_used:show.llin_used?radio("used"):"",water_storage:water,larvae_seen:show.larvae_seen?radio("larvae"):""};
+    var ok=!eh&&!ec;
+    F("rec").textContent=(ok?"✓ Record valid, saved as:\n":"✗ Fix the errors before saving.\n")+Object.keys(rec).join(",")+"\n"+Object.keys(rec).map(function(k){return rec[k]}).join(",");
+  }
+  F("sform").addEventListener("input",formUpdate); F("sform").addEventListener("change",formUpdate);
+  formUpdate();
+
+  /* ---------- demo 2: QC ---------- */
+  var raw=[
+    ["1001","2026-03-02","34","1","2","0"],
+    ["1002","2026-03-02","210","1","1","0"],
+    ["1003","2026-03-03","27","0","3","1"],
+    ["1004","","45","1","2","0"],
+    ["1005","2026-03-04","19","1","35","0"],
+    ["1003","2026-03-03","27","0","","1"],
+    ["1007","2026-03-05","52","1","2","0"],
+    ["1008","2026-13-05","41","0","","0"],
+    ["1009","2026-03-06","8","1","1","1"],
+    ["1010","2026-03-06","30","1","2","0"]
+  ];
+  var data, flags, fixes;
+  function qcReset(){data=raw.map(function(r){return r.slice()}); flags={}; fixes={}; drawQC();
+    ["n-dup","n-range","n-logic"].forEach(function(id){F(id).textContent="–"});
+    F("qcfix").disabled=true; F("qclog").innerHTML="<li>Press “Run quality checks” to scan the records.</li>";}
+  function drawQC(){
+    var tb=F("qcbody"); tb.innerHTML="";
+    data.forEach(function(r,i){
+      if(r===null) return;
+      var tr=document.createElement("tr"); if(flags["dup"+i]) tr.className="dup";
+      r.forEach(function(c,j){var td=document.createElement("td");td.textContent=c===""?"·":c;
+        if(flags[i+":"+j]) td.className="flag"; if(fixes[i+":"+j]) td.className="fixed"; tr.appendChild(td)});
+      tb.appendChild(tr);
+    });
+  }
+  function validDate(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;var m=+s.slice(5,7),d=+s.slice(8);return m>=1&&m<=12&&d>=1&&d<=31}
+  function qcRun(){
+    flags={}; fixes={}; var log=[], nd=0, nr=0, nl=0, seen={};
+    data.forEach(function(r,i){
+      if(r===null) return;
+      if(seen[r[0]]!==undefined){flags["dup"+i]=true;flags[i+":0"]=true;nd++;log.push("Row "+(i+1)+": hh_id "+r[0]+" duplicates row "+(seen[r[0]]+1)+".")} else seen[r[0]]=i;
+      if(r[1]===""){flags[i+":1"]=true;nl++;log.push("Row "+(i+1)+": visit_date is missing.")}
+      else if(!validDate(r[1])){flags[i+":1"]=true;nr++;log.push("Row "+(i+1)+": visit_date "+r[1]+" is not a real date.")}
+      var a=+r[2]; if(a<15||a>99){flags[i+":2"]=true;nr++;log.push("Row "+(i+1)+": resp_age "+r[2]+" is outside 15–99.")}
+      if(r[3]==="0"&&r[4]!==""){flags[i+":4"]=true;nl++;log.push("Row "+(i+1)+": llin_count filled although llin_present = 0.")}
+      if(r[3]==="1"&&r[4]!==""&&(+r[4]<1||+r[4]>20)){flags[i+":4"]=true;nr++;log.push("Row "+(i+1)+": llin_count "+r[4]+" is outside 1–20.")}
+    });
+    F("n-dup").textContent=nd; F("n-range").textContent=nr; F("n-logic").textContent=nl;
+    var ul=F("qclog"); ul.innerHTML=""; (log.length?log:["No problems found."]).forEach(function(t){var li=document.createElement("li");li.textContent=t;ul.appendChild(li)});
+    F("qcfix").disabled=!log.length; drawQC();
+  }
+  function qcFix(){
+    var log=[], seen={};
+    data.forEach(function(r,i){
+      if(r===null) return;
+      if(flags["dup"+i]){data[i]=null;log.push("Removed duplicate of hh_id "+r[0]+" (kept the more complete record).");return}
+      seen[r[0]]=1;
+      if(flags[i+":1"]){r[1]="";fixes[i+":1"]=1;log.push("Row "+(i+1)+": invalid or missing date set to blank and queried with the field team.")}
+      if(flags[i+":2"]){r[2]="";fixes[i+":2"]=1;log.push("Row "+(i+1)+": impossible age set to missing and queried.")}
+      if(flags[i+":4"]){if(r[3]==="0"){r[4]="";log.push("Row "+(i+1)+": llin_count cleared because llin_present = 0.")}else{r[4]="";log.push("Row "+(i+1)+": out-of-range llin_count set to missing and queried.")}fixes[i+":4"]=1}
+    });
+    flags={}; drawQC();
+    F("n-rows").textContent=data.filter(Boolean).length;
+    var ul=F("qclog"); ul.innerHTML=""; log.forEach(function(t){var li=document.createElement("li");li.textContent=t;ul.appendChild(li)});
+    var li=document.createElement("li"); li.textContent="Cleaned file ready for analysis. Every change is listed here as an audit trail."; li.style.color="var(--accent)"; ul.appendChild(li);
+    F("qcfix").disabled=true;
+  }
+  F("qcrun").addEventListener("click",qcRun); F("qcfix").addEventListener("click",qcFix);
+  F("qcreset").addEventListener("click",function(){qcReset();F("n-rows").textContent=raw.length});
+  qcReset();
+
+  /* ---------- demo 3: BBN ---------- */
+  var PR=0.35,PV=0.55,PB=0.15, PC={"11":0.15,"10":0.45,"01":0.04,"00":0.10}, PL={"11":0.95,"10":0.80,"01":0.70,"00":0.08}, PT={"1":0.88,"0":0.06};
+  function p(x,q){return x?q:1-q}
+  function infer(ev){
+    var z=0,c1=0,b1=0;
+    for(var r=0;r<2;r++)for(var v=0;v<2;v++)for(var b=0;b<2;b++)for(var c=0;c<2;c++)for(var l=0;l<2;l++)for(var t=0;t<2;t++){
+      if(ev.r!==null&&ev.r!==r)continue; if(ev.v!==null&&ev.v!==v)continue; if(ev.l!==null&&ev.l!==l)continue; if(ev.t!==null&&ev.t!==t)continue;
+      var w=p(r,PR)*p(v,PV)*p(b,PB)*p(c,PC[""+r+v])*p(l,PL[""+c+b])*p(t,PT[""+c]); z+=w; if(c)c1+=w; if(b)b1+=w;
+    }
+    return {c:c1/z,b:b1/z};
+  }
+  var ids=["r","v","l","t"];
+  function val(k){var s=F(k).value;return s===""?null:+s}
+  function verdict(c,b){
+    if(c>=0.85)return "Manage as Coffee Berry Disease: remove and destroy infected berries and plan fungicide control.";
+    if(b>c&&b>=0.4)return "The borer is now the more likely cause. Check berries for entry holes before spraying.";
+    if(c>=0.4)return "CBD is plausible but not confirmed. Send a berry sample for a laboratory test.";
+    return "CBD is unlikely on current evidence. Keep monitoring, especially in a wet season.";
+  }
+  function bbn(){
+    var ev={r:val("r"),v:val("v"),l:val("l"),t:val("t")}, res=infer(ev);
+    F("pc").textContent=(res.c*100).toFixed(1)+"%"; F("pb").textContent=(res.b*100).toFixed(1)+"%";
+    F("fc").style.width=(res.c*100)+"%"; F("fb").style.width=(res.b*100)+"%"; F("verdict").textContent=verdict(res.c,res.b);
+    [["nR","r"],["nV","v"],["nL","l"],["nT","t"]].forEach(function(x){F(x[0]).classList.toggle("on",ev[x[1]]!==null)});
+  }
+  ids.forEach(function(k){F(k).addEventListener("change",bbn)});
+  document.querySelectorAll(".presets button").forEach(function(btn){btn.addEventListener("click",function(){
+    var parts=btn.dataset.p.split("|"); ids.forEach(function(k,i){F(k).value=parts[i]}); bbn();})});
+  bbn();
+
+  /* ---------- contact brief ---------- */
+  function msg(){
+    var name=F("b-name").value.trim(), note=F("b-note").value.trim();
+    F("msg").textContent="Hello Mihret,\n\nI need: "+F("b-type").value+".\nTimeline: "+F("b-time").value+"."+(note?"\n\nDetails: "+note:"")+"\n\nCould you send me a plan and a quote?\n\n"+(name||"[Your name]");
+  }
+  F("brief").addEventListener("input",msg); F("brief").addEventListener("change",msg);
+  F("brief").addEventListener("submit",function(e){e.preventDefault()});
+  F("copy").addEventListener("click",function(){
+    var text=F("msg").textContent;
+    var done=function(){F("copied").textContent="Copied. Paste it into a LinkedIn message to me."};
+    try{navigator.clipboard.writeText(text).then(done,function(){F("copied").textContent="Copy didn't work here. Select the message and copy it manually."})}
+    catch(e){F("copied").textContent="Copy didn't work here. Select the message and copy it manually."}
+  });
+  msg();
+})();
+</script>
+</body>
+</html>
